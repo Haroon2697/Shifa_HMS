@@ -1,12 +1,8 @@
 {
   "mcpServers": {
-    "hospital-supabase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-supabase",
-        "postgres://postgres.ercktstpairlhrarsboj:yfoxeyU8u9NlyyZC@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-      ]
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=YOUR_PROJECT_REF"
     }
   }
 }
