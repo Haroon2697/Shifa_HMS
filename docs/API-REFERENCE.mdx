@@ -1,0 +1,337 @@
+# Hospital Management System - API Reference
+
+## Overview
+The HMS API provides RESTful endpoints for managing hospital operations, patient data, and billing information.
+
+## Authentication
+All API requests require authentication using JWT tokens.
+
+### Getting a Token
+\`\`\`bash
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@hospital.com",
+  "password": "password123"
+}
+\`\`\`
+
+Response:
+\`\`\`json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid",
+    "email": "user@hospital.com",
+    "role": "doctor"
+  }
+}
+\`\`\`
+
+## Endpoints
+
+### Patients
+
+#### List Patients
+\`\`\`
+GET /api/patients
+Authorization: Bearer {token}
+\`\`\`
+
+Query Parameters:
+- `page`: Page number (default: 1)
+- `limit`: Results per page (default: 20)
+- `search`: Search by name or ID
+
+Response:
+\`\`\`json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "patientId": "P00001",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com",
+      "phone": "+1-555-0001",
+      "dob": "1990-05-15",
+      "bloodGroup": "O+",
+      "status": "active"
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "limit": 20
+}
+\`\`\`
+
+#### Get Patient Details
+\`\`\`
+GET /api/patients/{patientId}
+Authorization: Bearer {token}
+\`\`\`
+
+#### Create Patient
+\`\`\`
+POST /api/patients
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "phone": "+1-555-0001",
+  "dob": "1990-05-15",
+  "bloodGroup": "O+",
+  "gender": "Male",
+  "address": "123 Main St"
+}
+\`\`\`
+
+#### Update Patient
+\`\`\`
+PUT /api/patients/{patientId}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "phone": "+1-555-0002"
+}
+\`\`\`
+
+### Appointments
+
+#### List Appointments
+\`\`\`
+GET /api/appointments
+Authorization: Bearer {token}
+\`\`\`
+
+Query Parameters:
+- `patientId`: Filter by patient
+- `doctorId`: Filter by doctor
+- `date`: Filter by date
+- `status`: Filter by status
+
+#### Create Appointment
+\`\`\`
+POST /api/appointments
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "patientId": "uuid",
+  "doctorId": "uuid",
+  "appointmentDate": "2025-10-20",
+  "appointmentTime": "10:00",
+  "type": "consultation",
+  "reason": "General Checkup"
+}
+\`\`\`
+
+#### Update Appointment Status
+\`\`\`
+PATCH /api/appointments/{appointmentId}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+\`\`\`
+
+### OPD Consultations
+
+#### Create Consultation
+\`\`\`
+POST /api/opd-consultations
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "patientId": "uuid",
+  "doctorId": "uuid",
+  "symptoms": "Fever, Cough",
+  "diagnosis": "Common Cold",
+  "treatmentPlan": "Rest, Fluids",
+  "medicines": "Paracetamol 500mg",
+  "followUpDate": "2025-10-25"
+}
+\`\`\`
+
+#### Get Consultation History
+\`\`\`
+GET /api/opd-consultations?patientId={patientId}
+Authorization: Bearer {token}
+\`\`\`
+
+### Invoices
+
+#### Create Invoice
+\`\`\`
+POST /api/invoices
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "patientId": "uuid",
+  "items": [
+    {
+      "description": "Room Charges",
+      "quantity": 3,
+      "unitPrice": 500
+    }
+  ],
+  "discountAmount": 250
+}
+\`\`\`
+
+#### Get Invoice
+\`\`\`
+GET /api/invoices/{invoiceId}
+Authorization: Bearer {token}
+\`\`\`
+
+#### Update Payment Status
+\`\`\`
+PATCH /api/invoices/{invoiceId}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "paymentStatus": "paid",
+  "paymentMethod": "credit_card"
+}
+\`\`\`
+
+### Rooms
+
+#### List Available Rooms
+\`\`\`
+GET /api/rooms?status=available
+Authorization: Bearer {token}
+\`\`\`
+
+#### Get Room Details
+\`\`\`
+GET /api/rooms/{roomId}
+Authorization: Bearer {token}
+\`\`\`
+
+#### Update Room Status
+\`\`\`
+PATCH /api/rooms/{roomId}
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "occupied",
+  "occupants": ["patientId1", "patientId2"]
+}
+\`\`\`
+
+## Error Handling
+
+### Error Response Format
+\`\`\`json
+{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid request parameters",
+    "details": {
+      "field": "email",
+      "issue": "Invalid email format"
+    }
+  }
+}
+\`\`\`
+
+### Common Error Codes
+- `UNAUTHORIZED`: Authentication failed
+- `FORBIDDEN`: Insufficient permissions
+- `NOT_FOUND`: Resource not found
+- `INVALID_REQUEST`: Invalid request parameters
+- `CONFLICT`: Resource already exists
+- `INTERNAL_ERROR`: Server error
+
+## Rate Limiting
+- 1000 requests per hour per user
+- 10000 requests per hour per API key
+
+## Pagination
+All list endpoints support pagination:
+- `page`: Page number (default: 1)
+- `limit`: Results per page (default: 20, max: 100)
+
+## Filtering & Sorting
+- Use query parameters for filtering
+- Use `sort` parameter for sorting (e.g., `sort=-createdAt`)
+
+## Webhooks
+Subscribe to events for real-time updates:
+- `patient.created`
+- `appointment.scheduled`
+- `invoice.created`
+- `payment.received`
+
+## SDK & Libraries
+- JavaScript/TypeScript: `npm install hms-sdk`
+- Python: `pip install hms-sdk`
+- Java: Maven/Gradle support available
+
+## Examples
+
+### JavaScript Example
+\`\`\`javascript
+import HMS from 'hms-sdk';
+
+const hms = new HMS({
+  apiKey: 'your-api-key',
+  baseURL: 'https://api.hms.hospital.com'
+});
+
+// Get patient
+const patient = await hms.patients.get('P00001');
+
+// Create appointment
+const appointment = await hms.appointments.create({
+  patientId: patient.id,
+  doctorId: 'doctor-uuid',
+  appointmentDate: '2025-10-20',
+  appointmentTime: '10:00'
+});
+\`\`\`
+
+### Python Example
+\`\`\`python
+from hms_sdk import HMS
+
+hms = HMS(api_key='your-api-key')
+
+# List patients
+patients = hms.patients.list(page=1, limit=20)
+
+# Create invoice
+invoice = hms.invoices.create(
+    patient_id='patient-uuid',
+    items=[
+        {
+            'description': 'Room Charges',
+            'quantity': 3,
+            'unit_price': 500
+        }
+    ]
+)
+\`\`\`
+
+## Support
+For API support and documentation:
+- Email: api-support@hms.hospital.com
+- Documentation: https://docs.hms.hospital.com
+- Status Page: https://status.hms.hospital.com
+\`\`\`
+\`\`\`

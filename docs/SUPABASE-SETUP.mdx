@@ -1,0 +1,174 @@
+# Supabase Setup Guide for HMS
+
+## Overview
+
+This guide walks you through setting up the Hospital Management System with Supabase as the backend database and authentication provider.
+
+## Prerequisites
+
+- Supabase account (free tier available at https://supabase.com)
+- Node.js 18+ installed
+- The HMS application code
+
+## Step 1: Create a Supabase Project
+
+1. Go to [https://supabase.com](https://supabase.com) and sign in
+2. Click "New Project"
+3. Enter project details:
+   - **Name**: Hospital Management System (or your preferred name)
+   - **Database Password**: Create a strong password
+   - **Region**: Choose closest to your location
+4. Click "Create new project" and wait for initialization (2-3 minutes)
+
+## Step 2: Get Your Credentials
+
+1. Once your project is created, go to **Settings → API**
+2. Copy the following values:
+   - **Project URL** → `SUPABASE_NEXT_PUBLIC_SUPABASE_URL`
+   - **anon pubSUPABASE_NEXT_PUBLIC_SUPABASE_ANON_KEY_ANON_KEY`
+   - **service_role secret** → `SUPABASE_SERVICE_ROLE_KEY` (keep this secret!)
+
+## Step 3: Add Environment Variables
+
+In your v0 project, go to the **Vars** section in the left sidebar and add:
+
+\`\`\`
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+\`\`\`
+
+## Step 4: Run Database Migration
+
+1. In Supabase dashboard, go to **SQL Editor**
+2. Click **New Query**
+3. Copy the entire contents of `scripts/02-create-hms-schema-with-rls.sql`
+4. Paste into the SQL editor
+5. Click **Run**
+
+This creates all necessary tables with Row Level Security (RLS) policies.
+
+## Step 5: Create Test Staff Accounts
+
+In the Supabase SQL Editor, run this script to create test users:
+
+\`\`\`sql
+-- Create test admin user
+INSERT INTO auth.users (
+  id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at
+) VALUES (
+  gen_random_uuid(),
+  'admin@hospital.com',
+  crypt('password123', gen_salt('bf')),
+  now(),
+  now(),
+  now()
+) ON CONFLICT DO NOTHING;
+
+-- Create test doctor user
+INSERT INTO auth.users (
+  id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at
+) VALUES (
+  gen_random_uuid(),
+  'doctor@hospital.com',
+  crypt('password123', gen_salt('bf')),
+  now(),
+  now(),
+  now()
+) ON CONFLICT DO NOTHING;
+
+-- Create test receptionist user
+INSERT INTO auth.users (
+  id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at
+) VALUES (
+  gen_random_uuid(),
+  'receptionist@hospital.com',
+  crypt('password123', gen_salt('bf')),
+  now(),
+  now(),
+  now()
+) ON CONFLICT DO NOTHING;
+\`\`\`
+
+Then create corresponding staff profiles:
+
+\`\`\`sql
+-- Insert staff profiles
+INSERT INTO public.staff (id, email, full_name, role, department, is_active)
+SELECT id, email, split_part(email, '@', 1), 
+  CASE 
+    WHEN email = 'admin@hospital.com' THEN 'admin'
+    WHEN email = 'doctor@hospital.com' THEN 'doctor'
+    WHEN email = 'receptionist@hospital.com' THEN 'receptionist'
+  END,
+  'General',
+  true
+FROM auth.users
+WHERE email IN ('admin@hospital.com', 'doctor@hospital.com', 'receptionist@hospital.com')
+ON CONFLICT DO NOTHING;
+\`\`\`
+
+## Step 6: Test the Connection
+
+1. Deploy or run the HMS application
+2. Go to the login page
+3. Try logging in with:
+   - **Email**: admin@hospital.com
+   - **Password**: password123
+
+If successful, you'll be redirected to the dashboard!
+
+## Troubleshooting
+
+### "Invalid login credentials"
+- Ensure the user exists in Supabase auth
+- Check that the email is confirmed (email_confirmed_at is set)
+- Verify the password is correct
+
+### "RLS policy violation"
+- This means the user doesn't have permission to access that data
+- Check that the user's role is correctly set in the `staff` table
+- Verify RLS policies are correctly configured
+
+### "Connection refused"
+- Check that `NEXT_PUBLIC_SUPABASE_URL` is correct
+- Ensure your Supabase project is active
+- Verify network connectivity
+
+## Security Best Practices
+
+1. **Never commit secrets**: Keep `SUPABASE_SERVICE_ROLE_KEY` secret
+2. **Use RLS**: All tables have RLS enabled - this is enforced
+3. **Email verification**: Users must confirm their email before accessing data
+4. **Role-based access**: Different roles have different permissions
+5. **Audit logs**: Monitor who accesses what data
+
+## Next Steps
+
+1. Create additional staff accounts through the signup page
+2. Add sample patient data
+3. Configure email notifications (optional)
+4. Set up backups in Supabase dashboard
+5. Deploy to production
+
+## Additional Resources
+
+- [Supabase Documentation](https://supabase.com/docs)
+- [Supabase Auth Guide](https://supabase.com/docs/guides/auth)
+- [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
+\`\`\`

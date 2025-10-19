@@ -1,0 +1,204 @@
+# Hospital Management System - Deployment Guide
+
+## Prerequisites
+- Node.js 18+ and npm
+- PostgreSQL 12+
+- Supabase account
+- Vercel account (for deployment)
+
+## Local Development Setup
+
+### 1. Clone Repository
+\`\`\`bash
+git clone https://github.com/your-org/hms.git
+cd hms
+\`\`\`
+
+### 2. Install Dependencies
+\`\`\`bash
+npm install
+\`\`\`
+
+### 3. Environment Variables
+Create a `.env.local` file:
+\`\`\`
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+\`\`\`
+
+### 4. Database Setup
+\`\`\`bash
+# Run migrations
+npm run db:migrate
+
+# Seed sample data
+npm run db:seed
+\`\`\`
+
+### 5. Start Development Server
+\`\`\`bash
+npm run dev
+\`\`\`
+
+Visit `http://localhost:3000`
+
+## Production Deployment
+
+### 1. Prepare for Production
+\`\`\`bash
+# Build the application
+npm run build
+
+# Test production build locally
+npm run start
+\`\`\`
+
+### 2. Deploy to Vercel
+\`\`\`bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel --prod
+\`\`\`
+
+### 3. Configure Environment Variables
+In Vercel dashboard:
+1. Go to Settings > Environment Variables
+2. Add production environment variables
+3. Redeploy
+
+### 4. Database Configuration
+- Set up PostgreSQL database
+- Run migrations on production
+- Configure backups
+
+### 5. SSL/TLS Certificate
+- Vercel automatically provides SSL
+- Configure custom domain if needed
+
+## Docker Deployment
+
+### Dockerfile
+\`\`\`dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+\`\`\`
+
+### Docker Compose
+\`\`\`yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=hms
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+\`\`\`
+
+## Monitoring & Maintenance
+
+### Health Checks
+\`\`\`bash
+# Check application health
+curl https://your-domain.com/api/health
+\`\`\`
+
+### Logging
+- Configure centralized logging (e.g., Sentry, LogRocket)
+- Monitor error rates and performance
+- Set up alerts for critical issues
+
+### Backups
+- Daily automated database backups
+- Store backups in secure location
+- Test restore procedures regularly
+
+### Updates
+- Keep dependencies updated
+- Test updates in staging environment
+- Plan maintenance windows
+
+## Security Checklist
+
+- [ ] Enable HTTPS/SSL
+- [ ] Configure CORS properly
+- [ ] Set up rate limiting
+- [ ] Enable database encryption
+- [ ] Configure firewall rules
+- [ ] Set up DDoS protection
+- [ ] Enable audit logging
+- [ ] Configure backup encryption
+- [ ] Set up monitoring and alerts
+- [ ] Regular security audits
+
+## Performance Optimization
+
+### Caching
+- Enable Redis caching for frequently accessed data
+- Configure CDN for static assets
+- Implement query result caching
+
+### Database
+- Create appropriate indexes
+- Optimize queries
+- Monitor slow queries
+
+### Frontend
+- Enable code splitting
+- Optimize images
+- Minify CSS/JavaScript
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue**: Database connection failed
+- Verify database credentials
+- Check network connectivity
+- Ensure database is running
+
+**Issue**: High memory usage
+- Check for memory leaks
+- Optimize queries
+- Increase server resources
+
+**Issue**: Slow response times
+- Check database performance
+- Review application logs
+- Optimize slow endpoints
+
+## Support & Resources
+- Documentation: https://docs.hms.hospital.com
+- GitHub Issues: https://github.com/your-org/hms/issues
+- Email: support@hms.hospital.com
+\`\`\`
+\`\`\`

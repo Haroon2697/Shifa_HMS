@@ -1,0 +1,360 @@
+# Hospital Management System (HMS) - Complete Documentation
+
+## System Overview
+
+The Hospital Management System is a comprehensive, role-based application designed to streamline hospital operations, patient care, and administrative functions. The system supports multiple user roles with specialized dashboards and features tailored to their responsibilities.
+
+## Architecture
+
+### Technology Stack
+- **Frontend**: React with Next.js (App Router)
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: Role-based access control
+- **Real-time**: Supabase Realtime for live updates
+- **Styling**: Tailwind CSS with custom design tokens
+
+### Database Schema
+
+The HMS uses a comprehensive relational database with the following core tables:
+
+#### 1. Users Table
+Stores staff and system users with role-based access control.
+
+\`\`\`
+- id (UUID, Primary Key)
+- email (VARCHAR, Unique)
+- password_hash (VARCHAR)
+- full_name (VARCHAR)
+- role (VARCHAR) - admin, doctor, nurse, receptionist, radiologist, pharmacist, accountant
+- phone (VARCHAR)
+- department (VARCHAR)
+- is_active (BOOLEAN)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 2. Patients Table
+Maintains comprehensive patient information and medical history.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (VARCHAR, Unique) - Auto-generated ID
+- first_name, last_name (VARCHAR)
+- date_of_birth (DATE)
+- gender (VARCHAR)
+- blood_group (VARCHAR)
+- contact_info (phone, email, address)
+- emergency_contact (name, phone)
+- medical_history (TEXT)
+- allergies (TEXT)
+- is_active (BOOLEAN)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 3. Appointments Table
+Manages patient appointments with doctors.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- doctor_id (UUID, Foreign Key)
+- appointment_date (DATE)
+- appointment_time (TIME)
+- status (VARCHAR) - scheduled, completed, cancelled, no-show
+- appointment_type (VARCHAR) - consultation, follow-up, emergency
+- reason_for_visit (TEXT)
+- notes (TEXT)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 4. OPD Consultations Table
+Records outpatient department consultations.
+
+\`\`\`
+- id (UUID, Primary Key)
+- appointment_id (UUID, Foreign Key)
+- patient_id (UUID, Foreign Key)
+- doctor_id (UUID, Foreign Key)
+- consultation_date (TIMESTAMP)
+- symptoms (TEXT)
+- diagnosis (TEXT)
+- treatment_plan (TEXT)
+- prescribed_medicines (TEXT)
+- follow_up_date (DATE)
+- status (VARCHAR) - pending, completed, cancelled
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 5. Rooms/Wards Table
+Manages hospital rooms and bed availability.
+
+\`\`\`
+- id (UUID, Primary Key)
+- room_number (VARCHAR, Unique)
+- room_type (VARCHAR) - general, semi-private, private, icu, icu-hd
+- floor_number (INT)
+- capacity (INT)
+- available_beds (INT)
+- status (VARCHAR) - available, occupied, maintenance
+- daily_rate (DECIMAL)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 6. Admissions Table
+Tracks patient hospital admissions.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- room_id (UUID, Foreign Key)
+- admission_date (TIMESTAMP)
+- discharge_date (TIMESTAMP)
+- admission_type (VARCHAR) - emergency, planned, transfer
+- reason_for_admission (TEXT)
+- status (VARCHAR) - active, discharged, transferred
+- assigned_doctor_id (UUID, Foreign Key)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 7. OT Schedules Table
+Manages operation theatre schedules.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- surgeon_id (UUID, Foreign Key)
+- anesthetist_id (UUID, Foreign Key)
+- operation_date (DATE)
+- operation_time (TIME)
+- operation_type (VARCHAR)
+- estimated_duration (INT)
+- status (VARCHAR) - scheduled, in-progress, completed, cancelled
+- pre_op_notes (TEXT)
+- post_op_notes (TEXT)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 8. Radiology Tests Table
+Records imaging and diagnostic tests.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- ordered_by_doctor_id (UUID, Foreign Key)
+- test_type (VARCHAR) - X-Ray, CT Scan, MRI, Ultrasound, ECG
+- test_date (TIMESTAMP)
+- status (VARCHAR) - pending, completed, reported
+- findings (TEXT)
+- report_file_url (VARCHAR)
+- radiologist_id (UUID, Foreign Key)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 9. Emergency Cases Table
+Manages emergency department cases.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- case_number (VARCHAR, Unique)
+- arrival_time (TIMESTAMP)
+- chief_complaint (TEXT)
+- severity_level (VARCHAR) - critical, high, moderate, low
+- assigned_doctor_id (UUID, Foreign Key)
+- status (VARCHAR) - active, admitted, discharged, transferred
+- notes (TEXT)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 10. Invoices Table
+Manages billing and invoicing.
+
+\`\`\`
+- id (UUID, Primary Key)
+- invoice_number (VARCHAR, Unique)
+- patient_id (UUID, Foreign Key)
+- admission_id (UUID, Foreign Key)
+- invoice_date (TIMESTAMP)
+- total_amount (DECIMAL)
+- discount_amount (DECIMAL)
+- tax_amount (DECIMAL)
+- net_amount (DECIMAL)
+- payment_status (VARCHAR) - pending, partial, paid, cancelled
+- payment_method (VARCHAR)
+- notes (TEXT)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 11. Invoice Items Table
+Line items for invoices.
+
+\`\`\`
+- id (UUID, Primary Key)
+- invoice_id (UUID, Foreign Key)
+- item_type (VARCHAR) - room, consultation, surgery, test, medicine, procedure
+- description (TEXT)
+- quantity (INT)
+- unit_price (DECIMAL)
+- total_price (DECIMAL)
+- created_at (TIMESTAMP)
+\`\`\`
+
+#### 12. Medicines Table
+Pharmacy inventory management.
+
+\`\`\`
+- id (UUID, Primary Key)
+- medicine_name (VARCHAR)
+- generic_name (VARCHAR)
+- manufacturer (VARCHAR)
+- batch_number (VARCHAR)
+- expiry_date (DATE)
+- quantity_in_stock (INT)
+- unit_price (DECIMAL)
+- reorder_level (INT)
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+#### 13. Prescriptions Table
+Patient prescriptions.
+
+\`\`\`
+- id (UUID, Primary Key)
+- patient_id (UUID, Foreign Key)
+- doctor_id (UUID, Foreign Key)
+- prescription_date (TIMESTAMP)
+- medicine_id (UUID, Foreign Key)
+- dosage (VARCHAR)
+- frequency (VARCHAR)
+- duration_days (INT)
+- quantity (INT)
+- notes (TEXT)
+- status (VARCHAR) - active, completed, cancelled
+- created_at, updated_at (TIMESTAMP)
+\`\`\`
+
+## Module Overview
+
+### 1. Reception & Patient Registration
+**Responsible**: Receptionist
+- New patient registration
+- Patient information management
+- Appointment scheduling
+- Emergency case intake
+
+### 2. Doctor & OPD Management
+**Responsible**: Doctor
+- View appointments
+- Manage patient consultations
+- Prescribe medicines
+- Generate medical reports
+- Schedule follow-ups
+
+### 3. Operation Theatre (OT) Module
+**Responsible**: Doctor, Surgeon
+- Schedule surgeries
+- Manage OT availability
+- Track pre-op and post-op notes
+- Manage surgical team assignments
+
+### 4. Radiology Module
+**Responsible**: Radiologist
+- Order imaging tests
+- Record test results
+- Generate radiology reports
+- Track equipment usage
+
+### 5. Emergency Services
+**Responsible**: Receptionist, Doctor
+- Register emergency cases
+- Triage patients by severity
+- Assign emergency doctors
+- Track emergency admissions
+
+### 6. Room/Ward Management
+**Responsible**: Admin
+- Manage room inventory
+- Track bed availability
+- Assign rooms to patients
+- Monitor room status
+
+### 7. Unified Billing System
+**Responsible**: Accountant
+- Generate invoices
+- Track payments
+- Apply discounts
+- Generate financial reports
+- Manage payment methods
+
+### 8. Role-Based Access Control
+**Roles**:
+- **Admin**: Full system access, user management, reports
+- **Doctor**: Patient management, consultations, prescriptions
+- **Nurse**: Patient care, vital signs, medication administration
+- **Receptionist**: Patient registration, appointments, emergency intake
+- **Radiologist**: Imaging tests, report generation
+- **Pharmacist**: Medicine inventory, prescription fulfillment
+- **Accountant**: Billing, invoicing, payment tracking
+
+## Key Features
+
+### Real-time Updates
+- Live appointment status updates
+- Real-time bed availability
+- Instant billing notifications
+- Emergency case alerts
+
+### Data Security
+- Row-level security (RLS) policies
+- Role-based access control
+- Encrypted sensitive data
+- Audit logs for all transactions
+
+### Reporting
+- Patient admission reports
+- Financial reports
+- Department-wise statistics
+- Emergency case analytics
+
+### Integration Points
+- Pharmacy system
+- Laboratory management
+- Imaging systems
+- Payment gateways
+
+## Setup Instructions
+
+### 1. Database Setup
+Run the SQL migration script to create all tables:
+\`\`\`bash
+# The script is located at: scripts/01-create-tables.sql
+# Execute this in your Supabase SQL editor
+\`\`\`
+
+### 2. Environment Variables
+Set up the following environment variables in your Vercel project:
+\`\`\`
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+\`\`\`
+
+### 3. Authentication Setup
+Configure Supabase authentication with email/password method.
+
+### 4. Row-Level Security
+Implement RLS policies for each table based on user roles.
+
+## Future Enhancements
+
+1. **Mobile App**: Native mobile application for doctors and nurses
+2. **Telemedicine**: Video consultation capabilities
+3. **AI Integration**: Predictive analytics for patient outcomes
+4. **IoT Integration**: Real-time patient monitoring devices
+5. **Advanced Analytics**: Machine learning for resource optimization
+6. **Multi-hospital Support**: Manage multiple hospital branches
+7. **Insurance Integration**: Direct insurance claim processing
+8. **Prescription Management**: E-prescription and pharmacy integration
+
+## Support & Maintenance
+
+For issues or feature requests, please contact the development team. Regular backups are recommended for production environments.
+\`\`\`

@@ -1,0 +1,352 @@
+# Hospital Management System - User Guide
+
+## Table of Contents
+1. [Getting Started](#getting-started)
+2. [Login & Authentication](#login--authentication)
+3. [Role-Based Access](#role-based-access)
+4. [Module Guides](#module-guides)
+5. [Common Tasks](#common-tasks)
+6. [Troubleshooting](#troubleshooting)
+
+## Getting Started
+
+### System Requirements
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Internet connection
+- JavaScript enabled
+
+### First Login
+1. Navigate to the HMS application
+2. Enter your email and password
+3. Select your role from the available options
+4. Click "Sign In"
+
+## Login & Authentication
+
+### User Roles
+The system supports the following user roles:
+
+- **Administrator**: Full system access, user management, reports
+- **Doctor**: Patient management, consultations, prescriptions, OT scheduling
+- **Nurse**: Patient care, vital signs, medication administration
+- **Receptionist**: Patient registration, appointments, emergency intake
+- **Radiologist**: Imaging tests, report generation
+- **Pharmacist**: Medicine inventory, prescription fulfillment
+- **Accountant**: Billing, invoicing, payment tracking
+
+### Password Security
+- Passwords must be at least 8 characters long
+- Use a combination of uppercase, lowercase, numbers, and special characters
+- Change your password regularly
+- Never share your credentials
+
+## Role-Based Access
+
+### Dashboard Overview
+Each role has a customized dashboard with relevant modules and features:
+
+#### Administrator Dashboard
+- System overview and health status
+- User and staff management
+- Patient management
+- Room/ward management
+- Billing overview
+- System reports
+
+#### Doctor Dashboard
+- Today's appointments
+- Patient list
+- OPD consultations
+- OT schedule
+- Pending tasks
+
+#### Receptionist Dashboard
+- Patient registration
+- Appointment management
+- Emergency case intake
+- New registrations overview
+
+#### Accountant Dashboard
+- Financial overview
+- Invoice management
+- Payment tracking
+- Financial reports
+
+#### Radiologist Dashboard
+- Pending radiology tests
+- Test completion
+- Report generation
+- Test history
+
+## Module Guides
+
+### Patient Management
+
+#### Registering a New Patient
+1. Navigate to "Patient Registration" (Receptionist role)
+2. Click "Register New Patient"
+3. Fill in the following information:
+   - First Name and Last Name
+   - Email and Phone Number
+   - Date of Birth
+   - Blood Group
+   - Address and Contact Information
+   - Medical History
+   - Known Allergies
+4. Click "Register Patient"
+
+#### Viewing Patient Records
+1. Go to "Patient Management"
+2. Search for the patient by name or ID
+3. Click "View" to see detailed patient information
+4. Access medical history, allergies, and contact information
+
+#### Updating Patient Information
+1. Open patient record
+2. Click "Edit Patient"
+3. Update necessary information
+4. Save changes
+
+### Appointment Management
+
+#### Scheduling an Appointment
+1. Navigate to "Appointments"
+2. Click "Schedule Appointment"
+3. Enter:
+   - Patient Name
+   - Doctor Name
+   - Date and Time
+   - Appointment Type (Consultation, Follow-up, Emergency)
+   - Reason for Visit
+4. Click "Schedule Appointment"
+
+#### Managing Appointments
+- View all appointments in the calendar view
+- Update appointment status (Scheduled, Completed, Cancelled, No-show)
+- Send appointment reminders
+- Reschedule appointments if needed
+
+### OPD Consultations
+
+#### Recording a Consultation
+1. Go to "OPD Consultations"
+2. Click "New Consultation"
+3. Enter:
+   - Patient Name
+   - Doctor Name
+   - Symptoms
+   - Diagnosis
+   - Treatment Plan
+   - Prescribed Medicines
+   - Follow-up Date
+4. Click "Save Consultation"
+
+#### Viewing Consultation History
+1. Navigate to "OPD Consultations"
+2. Search for patient
+3. View all past consultations with details
+4. Print or export consultation records
+
+### Operation Theatre (OT) Schedule
+
+#### Scheduling Surgery
+1. Go to "OT Schedule"
+2. Click "Schedule Surgery"
+3. Enter:
+   - Patient Name
+   - Operation Type
+   - Surgeon Name
+   - Anesthetist Name
+   - Operation Date and Time
+   - Estimated Duration
+   - Pre-Op Notes
+4. Click "Schedule Surgery"
+
+#### Managing OT Schedule
+- View all scheduled surgeries
+- Update surgery status (Scheduled, In-Progress, Completed, Cancelled)
+- Add post-operative notes
+- Track OT availability
+
+### Radiology Tests
+
+#### Ordering a Test
+1. Navigate to "Radiology Tests"
+2. Click "Order Test"
+3. Enter:
+   - Patient Name
+   - Test Type (X-Ray, CT Scan, MRI, Ultrasound, ECG)
+   - Ordered By Doctor
+   - Test Date
+   - Radiologist Name (if available)
+4. Click "Save Test"
+
+#### Completing Test Reports
+1. Go to "Radiology Tests"
+2. Find pending tests
+3. Click on test to open
+4. Add findings and observations
+5. Mark as "Reported"
+
+### Emergency Cases
+
+#### Registering Emergency Case
+1. Go to "Emergency Cases"
+2. Click "Register Emergency"
+3. Enter:
+   - Patient Name
+   - Chief Complaint
+   - Severity Level (Critical, High, Moderate, Low)
+   - Assigned Doctor
+   - Additional Notes
+4. Click "Register Case"
+
+#### Managing Emergency Cases
+- Track case status (Active, Admitted, Discharged, Transferred)
+- Update severity level as needed
+- Assign doctors and resources
+- Monitor emergency queue
+
+### Room/Ward Management
+
+#### Adding a Room
+1. Navigate to "Room/Ward Management"
+2. Click "Add Room"
+3. Enter:
+   - Room Number
+   - Room Type (General, Semi-Private, Private, ICU, ICU-HD)
+   - Floor Number
+   - Bed Capacity
+   - Daily Rate
+4. Click "Add Room"
+
+#### Tracking Bed Availability
+- View real-time bed availability
+- Monitor occupancy rates
+- Track room status (Available, Occupied, Maintenance)
+- Assign patients to rooms
+
+### Billing Management
+
+#### Creating an Invoice
+1. Go to "Billing Management"
+2. Click "Create Invoice"
+3. Enter:
+   - Patient Name
+   - Service Description
+   - Quantity
+   - Unit Price
+   - Discount Amount (if applicable)
+4. Click "Create Invoice"
+
+#### Tracking Payments
+- View all invoices
+- Update payment status
+- Track pending payments
+- Generate financial reports
+
+## Common Tasks
+
+### Task: Admit a Patient
+1. Register patient (if new)
+2. Schedule appointment with doctor
+3. Complete OPD consultation
+4. Assign room from available beds
+5. Create admission record
+6. Generate invoice
+
+### Task: Schedule Surgery
+1. Identify patient and operation type
+2. Check OT availability
+3. Schedule surgery with surgeon and anesthetist
+4. Add pre-operative notes
+5. Confirm with patient
+6. Update billing
+
+### Task: Generate Patient Report
+1. Open patient record
+2. Select date range
+3. Choose report type (Medical, Financial, Consultation)
+4. Click "Generate Report"
+5. Download or print
+
+### Task: Process Payment
+1. Open invoice
+2. Verify amount and details
+3. Record payment method
+4. Update payment status
+5. Generate receipt
+
+## Troubleshooting
+
+### Login Issues
+**Problem**: Cannot login
+- Verify email and password are correct
+- Check if account is active
+- Clear browser cache and cookies
+- Try a different browser
+
+**Problem**: Forgot password
+- Click "Forgot Password" on login page
+- Enter email address
+- Follow reset instructions sent to email
+
+### Data Issues
+**Problem**: Patient record not found
+- Verify patient ID or name spelling
+- Check if patient is marked as inactive
+- Search using different criteria
+
+**Problem**: Cannot save changes
+- Ensure all required fields are filled
+- Check internet connection
+- Verify you have permission to edit
+- Try refreshing the page
+
+### Performance Issues
+**Problem**: System is slow
+- Clear browser cache
+- Close unnecessary tabs
+- Check internet connection
+- Try during off-peak hours
+
+**Problem**: Page not loading
+- Refresh the page
+- Clear browser cache
+- Check internet connection
+- Contact system administrator
+
+## Best Practices
+
+### Data Entry
+- Always verify patient information before saving
+- Use consistent formatting for dates and phone numbers
+- Double-check calculations for billing
+- Keep medical records accurate and up-to-date
+
+### Security
+- Log out when leaving your workstation
+- Never share login credentials
+- Use strong passwords
+- Report suspicious activity immediately
+
+### Workflow
+- Complete patient registration before scheduling appointments
+- Update patient records after each visit
+- Process payments promptly
+- Generate reports regularly for analysis
+
+## Support & Contact
+
+For technical support or questions:
+- Contact your system administrator
+- Email: support@hms.hospital.com
+- Phone: +1-800-HMS-HELP
+- Hours: Monday-Friday, 9 AM - 5 PM
+
+## Version Information
+- HMS Version: 1.0
+- Last Updated: October 2025
+- Database: PostgreSQL with Supabase
+\`\`\`
+\`\`\`
